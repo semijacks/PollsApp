@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 
 
 # Create your views here.
@@ -46,3 +46,19 @@ def vote(request, question_id):
         # with POST data. THis prevents data from being posted twice if a 
         # user hits the Back button
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+# Zingchart data endpoints
+def resultsData(request, obj):
+    vote_data = []
+    
+    question = Question.objects.get(id=obj)
+    votes = question.choice_set.all()
+
+    for i in votes:
+        vote_data.append({i.choice_text: i.votes})
+
+    print(vote_data)
+    return JsonResponse(vote_data, safe=False)
+
+    
